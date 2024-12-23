@@ -1,0 +1,53 @@
+{% extends 'pages/base.html' %}
+
+{% block title %}Home{% endblock %}
+{% load static %}
+{% block content %}
+<div class="row">
+    {% for p in posts %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                {% if p.photo %}
+                    <img src="{{ p.photo.url }}" alt="Post Image" style="width:415px; height:300px;">
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ p.name }}</h5>
+                    <p class="card-text">Количество: {{ p.available_portions }}</p>
+                    <p class="card-text">Цена: {{ p.price }}</p>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#orderModal{{ p.id }}">Заказать</button>
+                </div>
+            </div>
+        </div>
+    <div class="modal fade" id="orderModal{{ p.id }}" tabindex="-1" aria-labelledby="orderModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="orderModalLabel">{{ p.name }}</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form method="POST" action="{% url 'add_to_cart' %}">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label for="quantity" class="form-label">Количество</label>
+                                <input type="number" class="form-control" id="quantity" name="quantity" value="1" min="1" max="{{ p.available_portions }}">
+                            </div>
+                            <div class="mb-3">
+                                <label for="ingredients" class="form-label">Дополнительные ингредиенты</label>
+                                <select class="form-control" id="ingredients" name="ingredients" multiple>
+                                    {% for ingredient in p.ingredients.all %}
+                                        <option value="{{ ingredient.id }}">{{ ingredient.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Добавить в корзину</button>
+                            <input type="hidden" name="drink_id" value="{{ p.id }}">
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+{% endblock content %}

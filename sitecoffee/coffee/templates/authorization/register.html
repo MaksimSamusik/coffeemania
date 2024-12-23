@@ -1,0 +1,12 @@
+{% extends 'authorization/base.html' %}
+{% load static %}
+{% block content %}
+        <h2>Регистрация</h2>
+        <form action="" method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                {{ form.as_p }}
+            </div>
+            <button type="submit" class="btn login-btn">Зарегистрироваться</button>
+        </form>
+    {% endblock %}
